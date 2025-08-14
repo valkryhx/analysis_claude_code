@@ -17,8 +17,8 @@ async def test_system():
         
         # Test basic imports
         print("✓ Testing imports...")
-        import fastmcp_config
-        print("  - FastMCP config imported")
+        import agent_messaging_config
+        print("  - Agent messaging config imported")
         
         import google_a2a_client
         print("  - Google A2A client imported")
@@ -47,7 +47,7 @@ async def test_system():
         print("  - System instance created")
         
         print("\n✅ Patent Agent System test completed successfully!")
-        print("The system is ready to use with FastMCP and Google A2A integration.")
+        print("The system is ready to use with agent messaging system and Google A2A integration.")
         
     except Exception as e:
         print(f"\n❌ Error during testing: {e}")

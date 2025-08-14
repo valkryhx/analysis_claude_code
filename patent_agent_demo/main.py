@@ -41,7 +41,7 @@ class PatentAgentDemo:
             console.print(Panel.fit(
                 "[bold blue]Patent Agent Demo System[/bold blue]\n"
                 "Multi-Agent Patent Planning & Development Platform\n"
-                "Powered by FastMCP and Google A2A",
+                "Powered by Agent Messaging System and Google A2A",
                 border_style="blue"
             ))
             
@@ -280,7 +280,7 @@ class PatentAgentDemo:
 6. Final Rewrite (Rewriter Agent)
 
 [bold cyan]System Features:[/bold cyan]
-- FastMCP message passing and coordination
+        - Agent messaging system for coordination
 - Google A2A AI-powered content generation
 - Multi-agent collaboration and workflow management
 - Automated quality assessment and improvement

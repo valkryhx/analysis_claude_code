@@ -11,7 +11,7 @@ import time
 import uuid
 
 from .base_agent import BaseAgent, TaskResult
-from fastmcp_config import MessageType, AgentStatus
+from agent_messaging_config import MessageType, AgentStatus
 
 logger = logging.getLogger(__name__)
 

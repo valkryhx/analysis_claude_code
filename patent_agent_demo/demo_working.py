@@ -32,8 +32,8 @@ class AgentInfo:
     capabilities: List[str]
     status: str
 
-class SimpleFastMCPBroker:
-    """Simplified FastMCP broker for demo"""
+class SimpleMessageBroker:
+    """Simplified message broker for demo"""
     
     def __init__(self):
         self.agents: Dict[str, AgentInfo] = {}
@@ -125,7 +125,7 @@ class SimpleGoogleA2AClient:
 class SimpleBaseAgent:
     """Simplified base agent for demo"""
     
-    def __init__(self, name: str, capabilities: List[str], broker: SimpleFastMCPBroker):
+    def __init__(self, name: str, capabilities: List[str], broker: SimpleMessageBroker):
         self.name = name
         self.capabilities = capabilities
         self.broker = broker
@@ -145,7 +145,7 @@ class SimpleBaseAgent:
 class SimplePlannerAgent(SimpleBaseAgent):
     """Simplified planner agent for demo"""
     
-    def __init__(self, broker: SimpleFastMCPBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
         super().__init__("planner_agent", ["patent_planning", "strategy_development"], broker)
         self.google_client = google_client
         
@@ -176,7 +176,7 @@ class SimplePlannerAgent(SimpleBaseAgent):
 class SimpleSearcherAgent(SimpleBaseAgent):
     """Simplified searcher agent for demo"""
     
-    def __init__(self, broker: SimpleFastMCPBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
         super().__init__("searcher_agent", ["prior_art_search", "patent_analysis"], broker)
         self.google_client = google_client
         
@@ -200,7 +200,7 @@ class SimpleSearcherAgent(SimpleBaseAgent):
 class SimpleWriterAgent(SimpleBaseAgent):
     """Simplified writer agent for demo"""
     
-    def __init__(self, broker: SimpleFastMCPBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
         super().__init__("writer_agent", ["patent_drafting", "technical_writing"], broker)
         self.google_client = google_client
         
@@ -222,7 +222,7 @@ class SimplePatentAgentSystem:
     """Simplified patent agent system for demo"""
     
     def __init__(self):
-        self.broker = SimpleFastMCPBroker()
+        self.broker = SimpleMessageBroker()
         self.google_client = SimpleGoogleA2AClient()
         self.agents = {}
         
@@ -295,7 +295,7 @@ async def main():
     """Main demo function"""
     print("Patent Agent Demo - Multi-Agent Patent Planning & Writing System")
     print("=" * 70)
-    print("This demo showcases the core functionality using FastMCP and Google A2A concepts.")
+            print("This demo showcases the core functionality using agent messaging system and Google A2A concepts.")
     print()
     
     # Create and start the system
@@ -326,7 +326,7 @@ async def main():
             print("  ✓ Developed a comprehensive strategy")
             print("  ✓ Conducted prior art research")
             print("  ✓ Generated a patent draft")
-            print("  ✓ Coordinated all agents through FastMCP")
+            print("  ✓ Coordinated all agents through message broker")
             print("  ✓ Utilized Google A2A for AI-powered analysis")
         
     except Exception as e:
@@ -336,7 +336,7 @@ async def main():
         await system.stop()
         
     print("\n✨ Demo completed! This showcases the core concepts of:")
-    print("  • Multi-agent coordination using FastMCP")
+            print("  • Multi-agent coordination using message broker")
     print("  • AI-powered patent analysis with Google A2A")
     print("  • Automated patent development workflow")
     print("  • Agent communication and task orchestration")
