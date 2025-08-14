@@ -1,5 +1,5 @@
 """
-FastMCP Configuration for Patent Agent System
+Agent Messaging Configuration for Patent Agent System
 Handles message passing, agent coordination, and system communication
 """
 
@@ -54,8 +54,8 @@ class AgentInfo:
     current_task: Optional[str] = None
     performance_metrics: Dict[str, float] = None
 
-class FastMCPBroker:
-    """Message broker for FastMCP communication"""
+class MessageBroker:
+    """Message broker for agent communication"""
     
     def __init__(self):
         self.agents: Dict[str, AgentInfo] = {}
@@ -146,7 +146,7 @@ class FastMCPBroker:
 class MessageHandler:
     """Handles message processing and routing"""
     
-    def __init__(self, broker: FastMCPBroker):
+    def __init__(self, broker: MessageBroker):
         self.broker = broker
         self.message_handlers: Dict[MessageType, callable] = {}
         
@@ -177,23 +177,23 @@ class MessageHandler:
             )
             await self.broker.send_message(error_message)
 
-class FastMCPConfig:
-    """Main configuration class for FastMCP"""
+class AgentMessagingConfig:
+    """Main configuration class for agent messaging system"""
     
     def __init__(self):
-        self.broker = FastMCPBroker()
+        self.broker = MessageBroker()
         self.message_handler = MessageHandler(self.broker)
         self.agent_coordinator = None
         
     async def initialize(self):
-        """Initialize the FastMCP system"""
-        logger.info("Initializing FastMCP system...")
+        """Initialize the agent messaging system"""
+        logger.info("Initializing agent messaging system...")
         
         # Register default message handlers
         self.message_handler.register_handler(MessageType.STATUS, self._handle_status_message)
         self.message_handler.register_handler(MessageType.ERROR, self._handle_error_message)
         
-        logger.info("FastMCP system initialized successfully")
+        logger.info("Agent messaging system initialized successfully")
         
     async def _handle_status_message(self, message: Message):
         """Handle status update messages"""
@@ -209,10 +209,10 @@ class FastMCPConfig:
         logger.error(f"Error from {message.sender}: {message.content.get('error', 'Unknown error')}")
         
     async def shutdown(self):
-        """Shutdown the FastMCP system"""
-        logger.info("Shutting down FastMCP system...")
+        """Shutdown the agent messaging system"""
+        logger.info("Shutting down agent messaging system...")
         # Cleanup resources
         pass
 
-# Global FastMCP configuration instance
-fastmcp_config = FastMCPConfig()
+# Global agent messaging configuration instance
+agent_messaging_config = AgentMessagingConfig()

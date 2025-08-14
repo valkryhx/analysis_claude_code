@@ -1,6 +1,6 @@
 # Patent Agent Demo - Setup & Usage Guide
 
-This guide will help you set up and run the Patent Agent Demo system, a multi-agent platform for automated patent development using FastMCP and Google A2A.
+This guide will help you set up and run the Patent Agent Demo system, a multi-agent platform for automated patent development using agent messaging system and Google A2A.
 
 ## 🚀 Quick Start
 
@@ -65,9 +65,9 @@ GOOGLE_API_KEY=your_actual_api_key_here
 OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_anthropic_key
 
-# FastMCP Configuration
-FASTMCP_HOST=localhost
-FASTMCP_PORT=8000
+# Agent Messaging Configuration
+AGENT_MESSAGING_HOST=localhost
+AGENT_MESSAGING_PORT=8000
 
 # Logging
 LOG_LEVEL=INFO
@@ -84,7 +84,7 @@ LOG_LEVEL=INFO
 
 The system requires several Python packages:
 
-- **FastMCP**: Message passing and coordination framework
+- **Agent Messaging System**: Message passing and coordination framework
 - **Google Generative AI**: AI-powered content generation
 - **Rich**: Beautiful terminal output
 - **Pydantic**: Data validation and settings management
@@ -163,7 +163,7 @@ python main.py
 Planning → Research → Discussion → Writing → Review → Rewrite → Complete
 ```
 
-### FastMCP Integration
+### Agent Messaging System Integration
 
 - **Message Broker**: Handles inter-agent communication
 - **Task Coordination**: Manages workflow execution
@@ -388,7 +388,7 @@ python tests/load_test.py --workflows 10 --duration 300
 
 ### Documentation
 
-- [FastMCP Documentation](https://fastmcp.dev/)
+- [Agent Messaging System Documentation](https://github.com/your-repo/agent-messaging-system)
 - [Google AI Documentation](https://ai.google.dev/)
 - [Python AsyncIO Guide](https://docs.python.org/3/library/asyncio.html)
 

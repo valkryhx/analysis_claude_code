@@ -1,4 +1,4 @@
-fastmcp>=0.1.0
+# fastmcp>=0.1.0  # Replaced with custom agent messaging system
 google-generativeai>=0.3.0
 pydantic>=2.0.0
 asyncio-mqtt>=0.16.0

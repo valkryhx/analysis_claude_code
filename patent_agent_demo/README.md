@@ -1,11 +1,11 @@
 # Patent Agent Demo - Multi-Agent Patent Planning & Writing System
 
-A sophisticated multi-agent system built with FastMCP and Google A2A for automated patent planning, research, discussion, writing, and review.
+A sophisticated multi-agent system built with agent messaging system and Google A2A for automated patent planning, research, discussion, writing, and review.
 
 ## 🚀 Features
 
 - **Multi-Agent Architecture**: Specialized agents for different patent development stages
-- **FastMCP Integration**: High-performance message passing and coordination
+- **Agent Messaging System**: High-performance message passing and coordination
 - **Google A2A**: Advanced AI-powered content generation and analysis
 - **Patent Planning**: Automated patent strategy and roadmap development
 - **Research & Search**: Comprehensive prior art and technology landscape analysis
@@ -112,9 +112,9 @@ OPENAI_API_KEY=your_openai_api_key
 # Anthropic API (optional)
 ANTHROPIC_API_KEY=your_anthropic_api_key
 
-# FastMCP Configuration
-FASTMCP_HOST=localhost
-FASTMCP_PORT=8000
+# Agent Messaging Configuration
+AGENT_MESSAGING_HOST=localhost
+AGENT_MESSAGING_PORT=8000
 ```
 
 ## 🚀 Usage
@@ -201,7 +201,7 @@ MIT License - see LICENSE file for details
 
 ## 🙏 Acknowledgments
 
-- FastMCP team for the messaging framework
+- Agent messaging system team for the messaging framework
 - Google AI for the A2A technology
 - Open source community for inspiration
 

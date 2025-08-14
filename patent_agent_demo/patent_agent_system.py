@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import time
 import uuid
 
-from fastmcp_config import fastmcp_config, MessageType
+from agent_messaging_config import agent_messaging_config, MessageType
 from agents import (
     PlannerAgent, SearcherAgent, DiscusserAgent, 
     WriterAgent, ReviewerAgent, RewriterAgent, CoordinatorAgent
@@ -37,8 +37,8 @@ class PatentAgentSystem:
         self.system_start_time = time.time()
         self.is_running = False
         
-        # Initialize FastMCP
-        self.fastmcp_config = fastmcp_config
+        # Initialize agent messaging system
+        self.agent_messaging_config = agent_messaging_config
         
         logger.info("Patent Agent System initialized")
         
@@ -47,8 +47,8 @@ class PatentAgentSystem:
         try:
             logger.info("Starting Patent Agent System...")
             
-            # Initialize FastMCP
-            await self.fastmcp_config.initialize()
+                    # Initialize agent messaging system
+        await self.agent_messaging_config.initialize()
             
             # Create and start all agents
             await self._create_agents()
@@ -70,8 +70,8 @@ class PatentAgentSystem:
             for agent in self.agents.values():
                 await agent.stop()
                 
-            # Stop FastMCP
-            await self.fastmcp_config.shutdown()
+            # Stop agent messaging system
+            await self.agent_messaging_config.shutdown()
             
             self.is_running = False
             logger.info("Patent Agent System stopped successfully")
@@ -201,12 +201,12 @@ class PatentAgentSystem:
     async def get_system_status(self) -> SystemStatus:
         """Get overall system status"""
         try:
-            # Get FastMCP system status
-            fastmcp_status = await self.fastmcp_config.broker.get_system_status()
+            # Get agent messaging system status
+            agent_messaging_status = await self.agent_messaging_config.broker.get_system_status()
             
             # Calculate system health
             total_agents = len(self.agents)
-            active_agents = fastmcp_status.get("active_agents", 0)
+            active_agents = agent_messaging_status.get("active_agents", 0)
             active_workflows = len(self.coordinator.active_workflows) if self.coordinator else 0
             
             # Determine system health
@@ -224,7 +224,7 @@ class PatentAgentSystem:
             
             # Compile performance metrics
             performance_metrics = {
-                "message_queue_size": fastmcp_status.get("message_queue_size", 0),
+                "message_queue_size": agent_messaging_status.get("message_queue_size", 0),
                 "agent_performance": {},
                 "workflow_success_rate": 0.95  # Mock value
             }
@@ -305,7 +305,7 @@ class PatentAgentSystem:
                                     content: Dict[str, Any], priority: int = 1):
         """Broadcast a message to all agents"""
         try:
-            await self.fastmcp_config.broker.broadcast_message(
+            await self.agent_messaging_config.broker.broadcast_message(
                 message_type, content, "system", priority
             )
         except Exception as e:
@@ -317,19 +317,19 @@ class PatentAgentSystem:
             health_status = {
                 "system": "healthy",
                 "agents": {},
-                "fastmcp": "healthy",
+                "agent_messaging": "healthy",
                 "workflows": "healthy",
                 "timestamp": time.time()
             }
             
-            # Check FastMCP health
+            # Check agent messaging system health
             try:
-                fastmcp_status = await self.fastmcp_config.broker.get_system_status()
-                if fastmcp_status.get("total_agents", 0) == 0:
-                    health_status["fastmcp"] = "unhealthy"
+                agent_messaging_status = await self.agent_messaging_config.broker.get_system_status()
+                if agent_messaging_status.get("total_agents", 0) == 0:
+                    health_status["agent_messaging"] = "unhealthy"
             except Exception as e:
-                health_status["fastmcp"] = "error"
-                health_status["fastmcp_error"] = str(e)
+                health_status["agent_messaging"] = "error"
+                health_status["agent_messaging_error"] = str(e)
                 
             # Check individual agent health
             for agent_name, agent in self.agents.items():
@@ -406,8 +406,8 @@ class PatentAgentSystem:
             stop_tasks = [agent.stop() for agent in self.agents.values()]
             await asyncio.gather(*stop_tasks, return_exceptions=True)
             
-            # Stop FastMCP
-            await self.fastmcp_config.shutdown()
+            # Stop agent messaging system
+            await self.agent_messaging_config.shutdown()
             
             self.is_running = False
             logger.critical("Emergency shutdown completed")

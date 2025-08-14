@@ -11,8 +11,8 @@ from dataclasses import dataclass
 import time
 import uuid
 
-from fastmcp_config import (
-    FastMCPBroker, Message, MessageType, AgentStatus, fastmcp_config
+from agent_messaging_config import (
+    MessageBroker, Message, MessageType, AgentStatus, agent_messaging_config
 )
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class BaseAgent(ABC):
     def __init__(self, name: str, capabilities: List[str]):
         self.name = name
         self.capabilities = capabilities
-        self.broker = fastmcp_config.broker
+        self.broker = agent_messaging_config.broker
         self.status = AgentStatus.IDLE
         self.current_task = None
         self.task_history: List[TaskResult] = []
