@@ -9,7 +9,7 @@ from typing import Dict, Any, List
 from dataclasses import dataclass
 
 from .base_agent import BaseAgent, TaskResult
-from ..google_a2a_client import get_google_a2a_client, SearchResult
+from google_a2a_client import get_google_a2a_client, SearchResult
 
 logger = logging.getLogger(__name__)
 
