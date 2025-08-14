@@ -9,7 +9,7 @@ from typing import Dict, Any, List
 from dataclasses import dataclass
 
 from .base_agent import BaseAgent, TaskResult
-from google_a2a_client import get_google_a2a_client, SearchResult
+from glm_client import get_glm_client, SearchResult
 
 logger = logging.getLogger(__name__)
 
@@ -41,13 +41,13 @@ class SearcherAgent(BaseAgent):
             name="searcher_agent",
             capabilities=["prior_art_search", "patent_analysis", "competitive_research", "novelty_assessment"]
         )
-        self.google_a2a_client = None
+        self.glm_client = None
         self.search_databases = self._load_search_databases()
         
     async def start(self):
         """Start the searcher agent"""
         await super().start()
-        self.google_a2a_client = await get_google_a2a_client()
+        self.glm_client = await get_glm_client()
         logger.info("Searcher Agent started successfully")
         
     async def execute_task(self, task_data: Dict[str, Any]) -> TaskResult:
@@ -212,9 +212,9 @@ class SearcherAgent(BaseAgent):
             wipo_results = await self._search_wipo(search_query)
             all_results.extend(wipo_results)
             
-            # Search Google Patents
-            google_results = await self._search_google_patents(search_query)
-            all_results.extend(google_results)
+            # Search using GLM client
+            glm_results = await self._search_glm_patents(search_query)
+            all_results.extend(glm_results)
             
             # Remove duplicates and sort by relevance
             unique_results = await self._deduplicate_results(all_results)
@@ -306,27 +306,35 @@ class SearcherAgent(BaseAgent):
             logger.error(f"Error searching WIPO: {e}")
             return []
             
-    async def _search_google_patents(self, search_query: SearchQuery) -> List[SearchResult]:
-        """Search Google Patents database"""
+    async def _search_glm_patents(self, search_query: SearchQuery) -> List[SearchResult]:
+        """Search using GLM AI model for patent analysis"""
         try:
-            # Mock Google Patents search
-            mock_results = [
-                SearchResult(
-                    patent_id="US98765432",
-                    title="Google Patents Example",
-                    abstract="Example from Google Patents database...",
-                    inventors=["Tech Innovator", "Digital Pioneer"],
-                    filing_date="2020-08-30",
-                    publication_date="2021-02-28",
-                    relevance_score=8.1,
-                    similarity_analysis={"overlap": "22%", "differences": "Modern approach"}
+            # Use GLM client to search for prior art
+            if self.glm_client:
+                results = await self.glm_client.search_prior_art(
+                    search_query.topic, 
+                    search_query.keywords,
+                    search_query.max_results
                 )
-            ]
-            
-            return mock_results
+                return results
+            else:
+                # Fallback to mock results if GLM client not available
+                mock_results = [
+                    SearchResult(
+                        patent_id="GLM001",
+                        title="GLM AI Generated Patent Analysis",
+                        abstract="AI-generated analysis of prior art using GLM-4.5-flash model...",
+                        inventors=["AI Assistant", "GLM Model"],
+                        filing_date="2024-01-01",
+                        publication_date="2024-01-01",
+                        relevance_score=8.5,
+                        similarity_analysis={"overlap": "25%", "differences": "AI-enhanced analysis"}
+                    )
+                ]
+                return mock_results
             
         except Exception as e:
-            logger.error(f"Error searching Google Patents: {e}")
+            logger.error(f"Error searching with GLM: {e}")
             return []
             
     async def _deduplicate_results(self, results: List[SearchResult]) -> List[SearchResult]:

@@ -1,6 +1,6 @@
 # Patent Agent Demo - Multi-Agent Patent Planning & Writing System
 
-A sophisticated multi-agent system built with agent messaging system and Google A2A for automated patent planning, research, discussion, writing, and review.
+A sophisticated multi-agent system built with agent messaging system and GLM-4.5-flash AI for automated patent planning, research, discussion, writing, and review.
 
 ## 🚀 Features
 
@@ -103,13 +103,13 @@ cp .env.example .env
 Create a `.env` file with your API keys:
 
 ```env
-# Google AI API
-GOOGLE_API_KEY=your_google_api_key
+# GLM-4.5-flash API (Required)
+# Get your API key from: https://open.bigmodel.cn/
+# Format: id:secret (e.g., "your_api_id:your_api_secret")
+GLM_API_KEY=your_glm_api_key_here
 
-# OpenAI API (optional)
+# Alternative AI APIs (optional)
 OPENAI_API_KEY=your_openai_api_key
-
-# Anthropic API (optional)
 ANTHROPIC_API_KEY=your_anthropic_api_key
 
 # Agent Messaging Configuration
