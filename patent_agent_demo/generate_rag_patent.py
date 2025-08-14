@@ -12,7 +12,7 @@ from typing import Dict, Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from config import config
-from simple_glm_client import SimpleGLMClient
+from correct_glm_client import CorrectGLMClient
 
 async def generate_rag_patent():
     """生成 RAG 相关专利"""
@@ -27,7 +27,7 @@ async def generate_rag_patent():
         
         # 创建 GLM 客户端
         print(f"🔑 使用 GLM API key: {config.get_glm_api_key()[:20]}...")
-        client = SimpleGLMClient(config.get_glm_api_key())
+        client = CorrectGLMClient(config.get_glm_api_key())
         
         # RAG 专利主题和描述
         topic = "基于多模态检索增强的生成式人工智能系统"
