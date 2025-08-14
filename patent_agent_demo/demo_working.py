@@ -71,12 +71,12 @@ class SimpleMessageBroker:
         """Get agent status"""
         return self.agents.get(name)
 
-class SimpleGoogleA2AClient:
-    """Simplified Google A2A client for demo"""
+class SimpleGLMClient:
+    """Simplified GLM-4.5-flash client for demo"""
     
     def __init__(self):
-        self.model_name = "gemini-pro"
-        print(f"🤖 Google A2A client initialized with model: {self.model_name}")
+        self.model_name = "glm-4.5-flash"
+        print(f"🤖 GLM-4.5-flash client initialized with model: {self.model_name}")
         
     async def analyze_patent_topic(self, topic: str, description: str) -> Dict[str, Any]:
         """Analyze a patent topic (simulated)"""
@@ -145,16 +145,16 @@ class SimpleBaseAgent:
 class SimplePlannerAgent(SimpleBaseAgent):
     """Simplified planner agent for demo"""
     
-    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGLMClient):
         super().__init__("planner_agent", ["patent_planning", "strategy_development"], broker)
-        self.google_client = google_client
+        self.glm_client = google_client
         
     async def create_patent_strategy(self, topic: str, description: str) -> Dict[str, Any]:
         """Create patent strategy"""
         print(f"📋 Planner Agent creating strategy for: {topic}")
         
         # Analyze topic
-        analysis = await self.google_client.analyze_patent_topic(topic, description)
+        analysis = await self.glm_client.analyze_patent_topic(topic, description)
         
         # Create strategy
         strategy = {
@@ -176,9 +176,9 @@ class SimplePlannerAgent(SimpleBaseAgent):
 class SimpleSearcherAgent(SimpleBaseAgent):
     """Simplified searcher agent for demo"""
     
-    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGLMClient):
         super().__init__("searcher_agent", ["prior_art_search", "patent_analysis"], broker)
-        self.google_client = google_client
+        self.glm_client = google_client
         
     async def conduct_prior_art_search(self, topic: str) -> Dict[str, Any]:
         """Conduct prior art search"""
@@ -188,7 +188,7 @@ class SimpleSearcherAgent(SimpleBaseAgent):
         keywords = topic.lower().split()
         
         # Search for prior art
-        search_results = await self.google_client.search_prior_art(topic, keywords)
+        search_results = await self.glm_client.search_prior_art(topic, keywords)
         
         await self.broker.broadcast_message(self.name, {
             "action": "search_completed",
@@ -200,16 +200,16 @@ class SimpleSearcherAgent(SimpleBaseAgent):
 class SimpleWriterAgent(SimpleBaseAgent):
     """Simplified writer agent for demo"""
     
-    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGoogleA2AClient):
+    def __init__(self, broker: SimpleMessageBroker, google_client: SimpleGLMClient):
         super().__init__("writer_agent", ["patent_drafting", "technical_writing"], broker)
-        self.google_client = google_client
+        self.glm_client = google_client
         
     async def draft_patent(self, topic: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Draft patent application"""
         print(f"✍️  Writer Agent drafting patent for: {topic}")
         
         # Generate patent draft
-        draft = await self.google_client.generate_patent_draft(topic, analysis)
+        draft = await self.glm_client.generate_patent_draft(topic, analysis)
         
         await self.broker.broadcast_message(self.name, {
             "action": "draft_completed",
@@ -223,7 +223,7 @@ class SimplePatentAgentSystem:
     
     def __init__(self):
         self.broker = SimpleMessageBroker()
-        self.google_client = SimpleGoogleA2AClient()
+        self.glm_client = SimpleGLMClient()
         self.agents = {}
         
     async def start(self):
@@ -231,9 +231,9 @@ class SimplePatentAgentSystem:
         print("🚀 Starting Patent Agent System...")
         
         # Create agents
-        self.agents["planner"] = SimplePlannerAgent(self.broker, self.google_client)
-        self.agents["searcher"] = SimpleSearcherAgent(self.broker, self.google_client)
-        self.agents["writer"] = SimpleWriterAgent(self.broker, self.google_client)
+        self.agents["planner"] = SimplePlannerAgent(self.broker, self.glm_client)
+        self.agents["searcher"] = SimpleSearcherAgent(self.broker, self.glm_client)
+        self.agents["writer"] = SimpleWriterAgent(self.broker, self.glm_client)
         
         # Start agents
         for agent in self.agents.values():
