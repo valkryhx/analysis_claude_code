@@ -18,3 +18,7 @@ rich>=13.0.0
 typer>=0.9.0
 click>=8.1.0
 colorama>=0.4.6
+# DuckDuckGo 搜索相关
+duckduckgo-search>=4.1.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
