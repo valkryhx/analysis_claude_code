@@ -12,7 +12,7 @@ from typing import Dict, Any
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from config import config
-from correct_glm_client import CorrectGLMClient
+from official_glm_client import OfficialGLMClient
 
 async def generate_rag_patent():
     """生成 RAG 相关专利"""
@@ -27,7 +27,7 @@ async def generate_rag_patent():
         
         # 创建 GLM 客户端
         print(f"🔑 使用 GLM API key: {config.get_glm_api_key()[:20]}...")
-        client = CorrectGLMClient(config.get_glm_api_key())
+        client = OfficialGLMClient(config.get_glm_api_key())
         
         # RAG 专利主题和描述
         topic = "基于多模态检索增强的生成式人工智能系统"
@@ -46,7 +46,7 @@ async def generate_rag_patent():
         print("\n🔍 第一步：专利主题分析")
         print("-" * 40)
         
-        analysis = await client.analyze_patent_topic(topic, description)
+        analysis = client.analyze_patent_topic(topic, description)
         
         print(f"📊 专利分析结果:")
         print(f"   新颖性评分: {analysis.novelty_score}/10")
@@ -65,7 +65,7 @@ async def generate_rag_patent():
         print("\n✍️  第二步：撰写专利文档")
         print("-" * 40)
         
-        draft = await client.draft_patent(topic, description)
+        draft = client.draft_patent(topic, description)
         
         print(f"📄 专利草稿生成完成!")
         print(f"   标题: {draft.title}")
@@ -95,7 +95,7 @@ async def generate_rag_patent():
         7. 改进建议 - 如何增强专利性
         """
         
-        assessment = await client.generate_response(assessment_prompt)
+        assessment = client.generate_response(assessment_prompt)
         
         print("📊 专利性评估结果:")
         print(assessment)
