@@ -11,7 +11,7 @@ from dataclasses import dataclass
 import time
 import uuid
 
-from ..fastmcp_config import (
+from fastmcp_config import (
     FastMCPBroker, Message, MessageType, AgentStatus, fastmcp_config
 )
 
