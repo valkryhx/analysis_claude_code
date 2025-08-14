@@ -73,10 +73,12 @@ class GLMClient:
     def _generate_jwt_token(self) -> str:
         """Generate JWT token for GLM API authentication"""
         try:
-            # Split API key into id and secret
+            # 对于单个 API key 格式，直接使用作为 Bearer token
             if ':' not in self.api_key:
-                raise ValueError("API key must be in format 'id:secret'")
+                # 直接使用 API key 作为 token
+                return self.api_key
                 
+            # 如果包含冒号，则使用原来的 JWT 生成方法
             api_id, api_secret = self.api_key.split(':', 1)
             
             # Create header
