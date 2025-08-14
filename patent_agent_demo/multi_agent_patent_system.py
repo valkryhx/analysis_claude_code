@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from official_glm_client import OfficialGLMClient
-from duckduckgo_advanced_client import DuckDuckGoAdvancedClient
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -34,26 +33,16 @@ class PatentContext:
     current_stage: str
     iteration_count: int = 0
 
-@dataclass
-class AgentTask:
-    """智能体任务"""
-    agent_name: str
-    task_type: str
-    prompt: str
-    context: Dict[str, Any]
-    expected_output: str
-    dependencies: List[str] = None
-
 class MultiAgentPatentSystem:
     """多智能体专利写作系统"""
     
     def __init__(self, glm_api_key: str):
         self.glm_client = OfficialGLMClient(glm_api_key)
-        self.search_client = DuckDuckGoAdvancedClient()
         self.patent_context = None
         self.workflow_history = []
         self.current_iteration = 0
         self.max_iterations = 5
+        self.workflow_start_time = time.time()
         
         # 智能体配置
         self.agents = {
@@ -118,7 +107,7 @@ class MultiAgentPatentSystem:
 请以结构化JSON格式返回，包含以上所有维度的详细分析。
 """,
                 "iteration_planning": """
-基于前{iteration_count}轮迭代的结果，请重新评估和调整专利战略规划：
+基于前{current_iteration}轮迭代的结果，请重新评估和调整专利战略规划：
 
 当前状态：{current_status}
 已解决的问题：{solved_issues}
@@ -269,37 +258,6 @@ class MultiAgentPatentSystem:
    - 技术深化建议
 
 请以JSON格式返回分析结果。
-""",
-                "solution_optimization": """
-基于前几轮的讨论结果，请提出具体的优化方案：
-
-当前技术方案：{current_solution}
-已识别的问题：{identified_issues}
-改进目标：{improvement_goals}
-
-请提供：
-
-1. 【技术方案优化】
-   - 具体的技术改进措施
-   - 技术实现细节的完善
-   - 技术架构的优化
-
-2. 【创新点强化】
-   - 强化核心创新点
-   - 增加技术深度
-   - 提升技术先进性
-
-3. 【技术效果提升】
-   - 性能指标的改进
-   - 功能特性的增强
-   - 用户体验的优化
-
-4. 【实施路径规划】
-   - 技术实施步骤
-   - 关键节点控制
-   - 风险控制措施
-
-请以JSON格式返回优化方案。
 """
             }
         }
@@ -357,37 +315,6 @@ class MultiAgentPatentSystem:
    - 权利要求结构：前序部分+特征部分
 
 请以JSON格式返回专利文档，确保内容完整、语言规范、技术准确。
-""",
-                "claims_optimization": """
-基于审查意见和讨论结果，请优化权利要求：
-
-当前权利要求：{current_claims}
-审查意见：{review_comments}
-改进要求：{improvement_requirements}
-
-请优化：
-
-1. 【权利要求结构优化】
-   - 调整权利要求的层次结构
-   - 优化从属权利要求的引用关系
-   - 确保权利要求的逻辑性
-
-2. 【技术特征优化】
-   - 明确技术特征的具体含义
-   - 增加必要的技术细节
-   - 强化技术特征的独特性
-
-3. 【保护范围优化】
-   - 扩大核心技术的保护范围
-   - 细化具体实施方式的保护
-   - 平衡保护范围与稳定性
-
-4. 【语言表达优化】
-   - 使用准确的技术术语
-   - 确保表达清晰明确
-   - 符合专利撰写规范
-
-请以JSON格式返回优化后的权利要求。
 """
             }
         }
@@ -440,36 +367,6 @@ class MultiAgentPatentSystem:
 - 具体问题清单
 - 改进建议
 - 风险等级评估
-""",
-                "compliance_check": """
-请进行专利合规性专项检查：
-
-检查对象：{check_target}
-检查标准：{check_standards}
-
-请检查：
-
-1. 【法律合规性】
-   - 是否符合专利法规定
-   - 是否违反公序良俗
-   - 是否涉及国家安全
-
-2. 【技术合规性】
-   - 是否符合技术标准
-   - 是否满足行业规范
-   - 是否通过技术评估
-
-3. 【格式合规性】
-   - 是否符合申请格式要求
-   - 是否满足文件规范
-   - 是否通过形式审查
-
-4. 【内容合规性】
-   - 是否包含禁止内容
-   - 是否涉及敏感技术
-   - 是否违反保密要求
-
-请以JSON格式返回合规性检查结果。
 """
             }
         }
@@ -479,7 +376,7 @@ class MultiAgentPatentSystem:
         return {
             "name": "内容优化专家",
             "role": "优化专利内容、提升质量、完善细节",
-            "expertise": ["内容行动", "质量提升", "细节完善", "表达优化"],
+            "expertise": ["内容优化", "质量提升", "细节完善", "表达优化"],
             "prompts": {
                 "content_optimization": """
 你是一位专业的内容优化专家，负责提升专利文档的整体质量。
@@ -518,37 +415,6 @@ class MultiAgentPatentSystem:
    - 增强竞争优势
 
 请以JSON格式返回优化后的内容。
-""",
-                "quality_enhancement": """
-请进行专利质量专项提升：
-
-当前质量水平：{current_quality}
-提升目标：{enhancement_targets}
-重点关注：{focus_areas}
-
-请提升：
-
-1. 【技术质量提升】
-   - 技术方案的完整性
-   - 技术实现的可行性
-   - 技术效果的可靠性
-
-2. 【文档质量提升】
-   - 文档结构的合理性
-   - 内容组织的逻辑性
-   - 表达方式的准确性
-
-3. 【创新质量提升】
-   - 创新点的技术深度
-   - 技术方案的独特性
-   - 竞争优势的显著性
-
-4. 【保护质量提升】
-   - 权利要求的保护强度
-   - 技术覆盖的全面性
-   - 规避设计的有效性
-
-请以JSON格式返回质量提升方案。
 """
             }
         }
@@ -590,37 +456,6 @@ class MultiAgentPatentSystem:
    - 调整执行计划
 
 请以JSON格式返回协调方案。
-""",
-                "iteration_management": """
-请管理本轮迭代过程：
-
-迭代轮次：{iteration_number}
-迭代目标：{iteration_goals}
-当前状态：{current_status}
-
-请管理：
-
-1. 【迭代策略】
-   - 确定迭代重点
-   - 设定改进目标
-   - 制定执行计划
-
-2. 【质量评估】
-   - 评估上轮迭代效果
-   - 识别质量改进点
-   - 设定质量提升目标
-
-3. 【资源协调】
-   - 分配智能体资源
-   - 协调工作负载
-   - 优化执行效率
-
-4. 【结果验证】
-   - 验证迭代成果
-   - 评估质量提升
-   - 决定是否继续迭代
-
-请以JSON格式返回迭代管理方案。
 """
             }
         }
@@ -677,7 +512,7 @@ class MultiAgentPatentSystem:
             "workflow_summary": {
                 "total_iterations": self.current_iteration,
                 "final_quality_score": self.workflow_history[-1]["quality_score"] if self.workflow_history else 0,
-                "workflow_duration": time.time() - self.workflow_start_time if hasattr(self, 'workflow_start_time') else 0
+                "workflow_duration": time.time() - self.workflow_start_time
             },
             "final_patent": final_patent,
             "workflow_history": self.workflow_history
@@ -740,7 +575,22 @@ class MultiAgentPatentSystem:
             "technical_field": self.patent_context.technical_field,
             "current_iteration": self.current_iteration,
             "workflow_history": self.workflow_history,
-            "current_status": self.patent_context.current_stage
+            "current_status": self.patent_context.current_stage,
+            "keywords": "证据图,RAG,检索增强生成,知识图谱,图神经网络",
+            "technical_solution": "基于证据图的RAG系统",
+            "innovation_points": ["证据图构建", "图增强检索", "多模态融合"],
+            "prior_art": [],
+            "patent_document": "专利文档内容",
+            "claims": ["权利要求1", "权利要求2"],
+            "current_content": "当前专利内容",
+            "optimization_goals": "提升技术深度和质量",
+            "improvement_requirements": "完善技术细节",
+            "current_task": "专利撰写任务",
+            "participating_agents": ["planner", "searcher", "discusser", "writer", "reviewer", "rewriter", "coordinator"],
+            "workflow_goals": "完成高质量专利撰写",
+            "solved_issues": "技术方案设计",
+            "pending_issues": "权利要求优化",
+            "quality_score": 8.0
         }
         
         # 生成具体提示词
@@ -864,7 +714,7 @@ class MultiAgentPatentSystem:
     
     async def _save_final_patent(self, final_patent: Dict[str, Any]):
         """保存最终专利文档"""
-        filename = f"Final_Patent_Iteration_{self.current_iteration}.txt"
+        filename = f"Evidence_Graph_Enhanced_RAG_Patent_Iteration_{self.current_iteration}.txt"
         
         try:
             with open(filename, 'w', encoding='utf-8') as f:
@@ -915,14 +765,20 @@ async def main():
     # 创建多智能体专利写作系统
     system = MultiAgentPatentSystem(config.get_glm_api_key())
     
-    # 定义专利主题
-    topic = "基于多模态检索增强的生成式人工智能系统"
+    # 定义专利主题：以证据图增强的RAG
+    topic = "基于证据图增强的检索增强生成系统"
     description = """
-    一种创新的多模态检索增强生成（Multi-Modal Retrieval-Augmented Generation, MM-RAG）系统，
-    该系统能够智能地从多种数据源（文本、图像、音频、视频）中检索相关信息，
-    并将检索到的信息与生成式AI模型相结合，生成高质量、准确且可追溯的响应。
-    该系统解决了传统生成式AI模型存在的幻觉问题、信息时效性不足以及缺乏可追溯性等问题。
+    一种创新的基于证据图增强的检索增强生成（Evidence Graph Enhanced Retrieval-Augmented Generation, EG-RAG）系统，
+    该系统通过构建和利用证据图（Evidence Graph）来增强传统RAG系统的检索能力和生成质量。
+    证据图能够捕捉知识实体之间的复杂关系、因果关系和证据链，为RAG系统提供更准确、更可靠的信息检索基础。
+    该系统解决了传统RAG系统在信息准确性、可追溯性和推理能力方面的局限性，实现了更高质量、更可信的信息生成。
     """
+    
+    print("🚀 开始执行多智能体协作专利写作系统")
+    print("=" * 80)
+    print(f"专利主题：{topic}")
+    print(f"技术描述：{description.strip()}")
+    print("=" * 80)
     
     # 执行多智能体协作工作流程
     result = await system.execute_multi_agent_workflow(topic, description)
