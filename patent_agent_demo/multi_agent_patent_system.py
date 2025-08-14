@@ -497,10 +497,15 @@ class MultiAgentPatentSystem:
                 "timestamp": datetime.now().isoformat()
             })
             
-            # 检查是否达到质量目标
-            if quality_score >= 8.5:
-                logger.info(f"达到质量目标，停止迭代。最终质量评分：{quality_score}")
-                break
+                    # 检查是否达到质量目标
+        if quality_score >= 8.5:
+            logger.info(f"达到质量目标，停止迭代。最终质量评分：{quality_score}")
+            break
+        
+        # 限制最大迭代次数，避免无限循环
+        if self.current_iteration >= 3:  # 限制为3轮迭代
+            logger.info(f"达到最大迭代次数，停止迭代。最终质量评分：{quality_score}")
+            break
             
             # 准备下一轮迭代
             await self._prepare_next_iteration(iteration_result, quality_score)
