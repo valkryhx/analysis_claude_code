@@ -73,10 +73,12 @@ class GLMClient:
     def _generate_jwt_token(self) -> str:
         """Generate JWT token for GLM API authentication"""
         try:
-            # Split API key into id and secret
+            # 对于单个 API key 格式，直接使用作为 Bearer token
             if ':' not in self.api_key:
-                raise ValueError("API key must be in format 'id:secret'")
+                # 直接使用 API key 作为 token
+                return self.api_key
                 
+            # 如果包含冒号，则使用原来的 JWT 生成方法
             api_id, api_secret = self.api_key.split(':', 1)
             
             # Create header
@@ -172,6 +174,38 @@ class GLMClient:
             
         except Exception as e:
             logger.error(f"Error analyzing patent topic: {e}")
+            raise
+    
+    async def draft_patent(self, topic: str, description: str) -> PatentDraft:
+        """Draft a complete patent document (alias for generate_patent_draft)"""
+        try:
+            prompt = f"""
+            Please draft a complete patent document for the following invention:
+            
+            Topic: {topic}
+            Description: {description}
+            
+            Please provide a comprehensive patent draft including:
+            
+            1. Title: A clear, concise title for the invention
+            2. Abstract: A brief summary (150-250 words) explaining the invention
+            3. Background: Technical background and prior art problems
+            4. Summary: Summary of the invention and its advantages
+            5. Detailed Description: Comprehensive technical description with examples
+            6. Claims: 3-5 well-structured patent claims
+            7. Drawings Description: Description of technical diagrams and figures
+            8. Technical Diagrams: List of suggested technical diagrams
+            
+            Format your response as a structured patent document.
+            """
+            
+            response = await self.generate_response(prompt)
+            
+            # Parse the response and return structured data
+            return self._parse_patent_draft(response)
+            
+        except Exception as e:
+            logger.error(f"Error drafting patent: {e}")
             raise
             
     async def search_prior_art(self, topic: str, keywords: List[str], 
